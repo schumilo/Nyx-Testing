@@ -245,7 +245,7 @@ mod tests {
         let mut process = init(sharedir, workdir, INPUT_BUFFFER_SIZE, false).unwrap();
 
         process.exec();
-        let input_buffer = process.input_buffer();    
+        let input_buffer = process.input_buffer_data();    
         let mut success = input_buffer.len() == INPUT_BUFFFER_SIZE as usize;
 
         if success {
@@ -266,7 +266,7 @@ mod tests {
         let workdir = &format!("/tmp/workdir_{}", gettid());
         let mut process = init(sharedir, workdir, INPUT_BUFFFER_SIZE, false).unwrap();
 
-        let input_buffer = process.input_buffer_mut();      
+        let input_buffer = process.input_buffer_data_mut();      
         let mut success = input_buffer.len() == INPUT_BUFFFER_SIZE as usize;
 
         if success {
@@ -293,7 +293,7 @@ mod tests {
         let workdir = &format!("/tmp/workdir_{}", gettid());
         let mut process = init(sharedir, workdir, INPUT_BUFFFER_SIZE, false).unwrap();
 
-        let input_buffer = process.input_buffer_mut();      
+        let input_buffer = process.input_buffer_data_mut();      
         let mut success = input_buffer.len() == INPUT_BUFFFER_SIZE as usize;
 
         if success {
@@ -425,7 +425,7 @@ mod tests {
             _ => false,
         };
 
-        let input_buffer = process.input_buffer();      
+        let input_buffer = process.input_buffer_data();      
         let bitmap_buffer = process.bitmap_buffer();     
         
         if success{
@@ -845,6 +845,50 @@ mod tests {
     #[test]
     fn memory_access_snapshot_32(){
         test_success("out/test_memory_access_snapshot_32/")
-    }   
+    } 
+
+    fn test_input_buffer_custom_size(sharedir: &str, buffer_size: usize) {
+        setup();
+        let workdir = &format!("/tmp/workdir_{}", gettid());
+
+        let process = init(sharedir, workdir, buffer_size as u32, false);
+        
+        let mut runner = process.unwrap();
+
+        let input_buffer_size = runner.input_buffer_size();
+        let input_buffer_data_size = runner.input_buffer_data_size();
+
+        println!("input_buffer_size: {}", input_buffer_size);
+        println!("input_buffer_data_size: {}", input_buffer_data_size);
+
+        assert!(input_buffer_size == buffer_size + 32);
+        assert!(input_buffer_data_size == buffer_size);
+
+        let first_data_byte = 0;
+        let last_data_byte = 0+input_buffer_data_size-1;
+
+        runner.input_buffer_data_mut()[first_data_byte] = 0xEF;
+        runner.input_buffer_data_mut()[last_data_byte] = 0xDF;
+
+        let success = match runner.exec() {
+            NyxReturnValue::Normal => true,
+            _ => false,
+        };
+
+        runner.shutdown();
+        fs::remove_dir_all(Path::new(workdir)).unwrap();
+
+        assert!(success);
+    }
+
+    
+    #[test]
+    fn input_buffer_custom_size(){
+        test_input_buffer_custom_size( "out/test_input_buffer_custom_size/", 2);
+        test_input_buffer_custom_size( "out/test_input_buffer_custom_size/", 40);
+        test_input_buffer_custom_size( "out/test_input_buffer_custom_size/", 0x1000-1);
+        test_input_buffer_custom_size( "out/test_input_buffer_custom_size/", 0x1000-30);
+        test_input_buffer_custom_size( "out/test_input_buffer_custom_size/", 0x1000-32);
+    }
 }
 

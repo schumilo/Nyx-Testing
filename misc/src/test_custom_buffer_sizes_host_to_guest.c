@@ -26,9 +26,9 @@ int main(int argc, char** argv){
 	kAFL_hypercall(HYPERCALL_KAFL_USER_FAST_ACQUIRE, 0);
 
 
-	for(uint32_t i = 0; i < payload_buffer_size; i++){
+	for(uint32_t i = 0; i < payload_buffer_size-NYX_INPUT_BUFFER_HEADER_SIZE; i++){
 
-		if (((uint8_t*)payload_buffer)[i] != 0xDD){
+		if ((payload_buffer->data)[i] != 0xDD){
 			char* err = NULL;
 			asprintf(&err, "Payload buffer signature mismatch -> at 0x%x", i);
 			habort(err);

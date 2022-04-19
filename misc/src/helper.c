@@ -67,7 +67,7 @@ void get_host_config(uint32_t* bitmap_size, uint32_t* ijon_bitmap_size, uint32_t
 
 	hprintf("[capablities] host_config.bitmap_size: 0x%"PRIx64"\n", host_config.bitmap_size);
     hprintf("[capablities] host_config.ijon_bitmap_size: 0x%"PRIx64"\n", host_config.ijon_bitmap_size);
-    hprintf("[capablities] host_config.payload_buffer_size: 0x%"PRIx64"x\n", host_config.payload_buffer_size);
+    hprintf("[capablities] host_config.payload_buffer_size: 0x%"PRIx64"\n", host_config.payload_buffer_size);
 
 	*bitmap_size = host_config.bitmap_size;
 	*ijon_bitmap_size = host_config.bitmap_size;

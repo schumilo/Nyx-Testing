@@ -190,3 +190,8 @@ echo "Compiling test: test_memory_access_snapshot_32"
 cp -R out/sharedir_template_64 out/test_memory_access_snapshot_32/
 gcc misc/src/helper.c  misc/src/test_memory_access.c -m32 -DTEST_SNAPSHOT_MEMORY -static -I misc/src/ -I ./packer/ -o out/test_memory_access_snapshot_32/target
 gcc misc/src/helper.c  misc/src/test_memory_access.c -m32 -DTEST_SNAPSHOT_MEMORY -static -I misc/src/ -I ./packer/  -DNO_PT_NYX -o out/test_memory_access_snapshot_32/target_no_pt
+
+echo "Compiling test: test_input_buffer_custom_size"
+cp -R out/sharedir_template_64 out/test_input_buffer_custom_size/
+gcc misc/src/helper.c  misc/src/test_input_buffer_custom_size.c -static -I misc/src/ -I ./packer/ -o out/test_input_buffer_custom_size/target
+gcc misc/src/helper.c  misc/src/test_input_buffer_custom_size.c -static -I misc/src/ -I ./packer/  -DNO_PT_NYX -o out/test_input_buffer_custom_size/target_no_pt
